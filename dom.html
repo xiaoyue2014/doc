@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script type="text/javascript" src="https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js"></script>
+<style type="text/css">
+  input,textarea{ border:none; background: none;}
+  .subTitle{ padding-left: 20px; }
+  .subSubTitle{ padding-left: 40px; }
+</style>
+</head>
+<body  ng-app="myApp" ng-controller="docCtrl">
+<div style="width:50%; float: left;">
+  <div ng-repeat="x in list" class="{{x.flag}} {{x.border}}" class="{{bdn}}">
+      <input type="input" ng-model="x.title" value="" placeholder="{{x.title}}" />
+      <a ng-hide="x.showTitle" ng-click="addTitle(0)">增加同级标题</a>  
+      <a ng-hide="x.showSubTitle" ng-click="addTitle(1)">增加子标题</a>
+      <br>
+      <textarea ng-model="x.content" cols="50" rows="1" placeholder="{{x.content}}"></textarea>
+      <!-- <a ng-show="$index!=0" style="color:red;" ng-click="del($index)">移除</a> -->
+  </div>
+  
+</div>
+<div style="width:50%; float: left;">
+  <div ng-repeat="x in list">
+      <p><b>{{x.id}}{{x.title}}</b></p>
+      <p>{{x.content}}</p>
+  </div>
+</div>
+<script>
+var app = angular.module('myApp', []);
+app.controller('docCtrl', function($scope) {
+    /*初始化list对象*/
+    $scope.list=[{id:0,title:"title",content:"content",flag:"title",showTitle:true,showSubTitle:false}]
+    $scope.addTitle=function(type){
+      var obj={id:"",title:"title",content:"content",flag:"",showTitle:"",showSubTitle:""};
+      obj.id=$scope.list.length;
+      if(type==0){
+          obj.flag=$scope.list[$scope.list.length-1].flag;
+          if($scope.list[$scope.list.length-1].flag=="subSubTitle"){
+            obj.showSubTitle=true;
+          }
+      }else if(type==1){
+          if($scope.list[$scope.list.length-1].flag=="subTitle"){
+          obj.flag="subSubTitle";
+          obj.showSubTitle=true;
+        }else{
+          obj.flag="subTitle";
+        }
+      }
+      $scope.list[$scope.list.length-1].showTitle=true;
+      $scope.list[$scope.list.length-1].showSubTitle=true;
+      $scope.list[$scope.list.length-1].border="dbn";
+      $scope.list.push(obj);
+    }
+    /*删除当前元素*/
+/*    $scope.del=function(idx){
+        $scope.list.splice(idx,1);
+    }*/
+});
+</script>
+</body>
+</html>

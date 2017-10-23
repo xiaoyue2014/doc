@@ -2,36 +2,81 @@
 <html>
 <head>
 <meta charset="utf-8">
+<link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">
 <script type="text/javascript" src="https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js"></script>
 <style type="text/css">
   input,textarea{ border:none; background: none;}
-  .subTitle{ padding-left: 20px; }
-  .subSubTitle{ padding-left: 40px; }
+  .title{ border-top:1px solid #ccc;}
+  .title input,.title p b{ font-size: 24px;}
+  .subTitle{ padding-left: 30px;}
+  .subTitle input,.subTitle p b{ font-size: 20px;}
+  .subSubTitle{ padding-left: 60px;}
+  .subSubTitle input,.subSubTitle p b{ font-size: 16px;}
 </style>
 </head>
 <body  ng-app="myApp" ng-controller="docCtrl">
-<div style="width:50%; float: left;">
-  <div ng-repeat="x in list" class="{{x.flag}} {{x.border}}" class="{{bdn}}">
+<div ng-show="!previewContent">
+<div style="float:right;">
+	<i class="fa fa-eye" aria-hidden="true" ng-click="preview()"></i>
+	<i class="fa fa-floppy-o" aria-hidden="true"></i>
+	<i class="fa fa-cloud-upload" aria-hidden="true"></i>
+</div>
+<div style="clear:both"></div>
+<div style=" border:1px solid #ccc;">
+  <div ng-repeat="x in list" class="{{x.flag}}">
       <input type="input" ng-model="x.title" value="" placeholder="{{x.title}}" />
-      <a ng-hide="x.showTitle" ng-click="addTitle(0)">增加同级标题</a>  
-      <a ng-hide="x.showSubTitle" ng-click="addTitle(1)">增加子标题</a>
+      <a ng-hide="x.showTitle" ng-click="addTitle(0)">
+      	<i class="fa fa-plus" aria-hidden="true"></i>
+      </a>
+      <a ng-hide="x.showSubTitle" ng-click="addTitle(1)">▼</a>
       <br>
       <textarea ng-model="x.content" cols="50" rows="1" placeholder="{{x.content}}"></textarea>
-      <!-- <a ng-show="$index!=0" style="color:red;" ng-click="del($index)">移除</a> -->
+      <select>
+          <option>input text</option>
+          <option>checkbox</option>
+          <option>table</option>
+          <option>image</option>
+          <option>file</option>
+          <option>date</option>
+          <option>add new</option>
+      </select>
+      <a ng-show="$index!=0" style="color:red;" ng-click="del($index)">
+      	<i class="fa fa-times" aria-hidden="true"></i>
+      </a>
   </div>
-  
+  <div style="float: right;">
+	  <a ng-click="addTitle(2)">
+		<i class="fa fa-plus-square" aria-hidden="true"></i>
+	  </a>
+	  <a ng-click="copy()">
+		<i class="fa fa-clipboard" aria-hidden="true"></i>
+	  </a>
+	  <a ng-click="delete()">
+		<i class="fa fa-trash-o" aria-hidden="true"></i>
+	  </a>
+  </div>
+  <div style="clear:both"></div>
 </div>
-<div style="width:50%; float: left;">
-  <div ng-repeat="x in list">
-      <p><b>{{x.id}}{{x.title}}</b></p>
-      <p>{{x.content}}</p>
-  </div>
+</div>
+<div ng-show="previewContent">
+	<a style="float: right;" ng-click="back()">
+	<i class="fa fa-arrow-left" aria-hidden="true"></i>
+	</a>
+	<div style="clear:both"></div>
+	<div style=" border:1px solid #ccc;">
+	  <div ng-repeat="x in list" class="{{x.flag}}">
+	      <p><b>{{x.title}}</b></p>
+	      <p>{{x.content}}</p>
+	  </div>
+	</div>
 </div>
 <script>
 var app = angular.module('myApp', []);
 app.controller('docCtrl', function($scope) {
     /*初始化list对象*/
-    $scope.list=[{id:0,title:"title",content:"content",flag:"title",showTitle:true,showSubTitle:false}]
+    $scope.list=[{id:0,title:"title",content:"content",flag:"title",showTitle:true,showSubTitle:false}];
+    $scope.previewContent=false;
+    /*添加标题*/
     $scope.addTitle=function(type){
       var obj={id:"",title:"title",content:"content",flag:"",showTitle:"",showSubTitle:""};
       obj.id=$scope.list.length;
@@ -50,13 +95,34 @@ app.controller('docCtrl', function($scope) {
       }
       $scope.list[$scope.list.length-1].showTitle=true;
       $scope.list[$scope.list.length-1].showSubTitle=true;
-      $scope.list[$scope.list.length-1].border="dbn";
+      if(type==2){
+          obj.flag="title";
+          obj.showTitle=true;
+          obj.showSubTitle=false;
+      }
       $scope.list.push(obj);
     }
     /*删除当前元素*/
-/*    $scope.del=function(idx){
+    $scope.del=function(idx){
         $scope.list.splice(idx,1);
-    }*/
+    }
+    /*复制*/
+    $scope.copy=function(){
+		for(i=0;i<$scope.list.length;i++){
+    		$scope.list.push($scope.list[i]);
+    	}
+    }
+    /*删除模块*/
+    $scope.copy=function(){
+    }
+    /*预览*/
+    $scope.preview=function(){
+    	$scope.previewContent=true;
+    }
+    /*返回*/
+    $scope.back=function(){
+    	$scope.previewContent=false;
+    }
 });
 </script>
 </body>
